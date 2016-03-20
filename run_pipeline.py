@@ -33,7 +33,7 @@ SAMTOOLS = "/home/ubuntu/jrw_pgdx/jwhite-bin/samtools"
 PULLCOSM = "/home/ubuntu/sstadick/scripts/pullCosm.py"
 MUTECT = "/home/ubuntu/jrw_pgdx/jwhite-lib/mutect-1.1.4/muTect-1.1.4.jar"
 BOWTIE2 = "/home/ubuntu/jrw_pgdx/jwhite-bin/bowtie2"
-NOVOALIGN = "/home/ubuntu/jrw_pgdx/jwhite-bin/novoalign"
+NOVOALIGN = "/home/ubuntu/jrw_pgdx/jwhite-lib/novocraft/novoalign"
 
 # REFS
 REF_GENOME_HG38 = "/mnt/VAR_DATA/OFFICAL_REFs/hg38/hg38.fa"
@@ -124,7 +124,7 @@ def align(pl):
     # starts processing on basename_indel.bam
     # outputs basename_indel_sort.bam
     #6
-    print "--> Starging Realignment"
+    print "--> Starging Alignment"
     if (not os.path.isfile(outDir + "/" + baseName + "_new1.fq")):
         pl.convertbamtofastq()
     else:
@@ -133,17 +133,17 @@ def align(pl):
     #7 Select aligner:
     if "bowtie2" in aligner:
         if (not os.path.isfile(outDir + "/" + baseName + "_indel.sam")):
-            pl.run_bowtie2("_new1.fq", "_new2.fq", "_indel.sam")
+            pl.run_bowtie2(in_suffix="_new1.fq", in2_suffix="_new2.fq", out_suffix="_indel.sam")
         else:
             print "--> Bowtie2 on ART SAM has already been run"
     elif "bwa" in aligner:
         if (not os.path.isfile(outDir + "/" + baseName + "_indel.sam")):
-            pl.bwa_mem("_new1.fq", "_new2.fq", "_indel.sam")
+            pl.bwa_mem(in_suffix="_new1.fq", in2_suffix="_new2.fq", out_suffix="_indel.sam")
         else:
             print "--> BWA MEM has already been run"
     elif "novoalign" in aligner:
         if (not os.path.isfile(outDir + "/" + baseName + "_indel.sam")):
-            pl.bwa_mem("_new1.fq", "_new2.fq", "_indel.sam")
+            pl.run_novoalign(in_suffix="_new1.fq", in2_suffix="_new2.fq", out_suffix="_indel.sam")
         else:
             print "--> Novoalign has already been run"
     else:
@@ -152,13 +152,13 @@ def align(pl):
 
     #7.5 sam to bam
     if (not os.path.isfile(outDir + "/" + baseName + "_indel.bam")):
-        pl.samtobam("_indel.sam", "_indel.bam")
+        pl.samtobam("_indel.sam", "_new.bam")
     else:
         print "--> SAMTOOLS View conversion from SAM to BAM has already been run"
 
     #8
     if (not os.path.isfile(outDir + "/" + baseName + "_indel_sort.bam.bai")):
-        pl.sort_with_picard("_indel.bam", "_indel_sort.bam")
+        pl.sort_with_picard("_new.bam", "_indel_sort.bam")
     else:
             print "--> " + baseName + "_indel.bam has alread been sorted by PICARD"
 
@@ -232,10 +232,16 @@ def controller():
         create_reads(pl)
     elif "addMuts" in start:
         addMuts(pl)
+        align(pl)
+        pre_processing(pl)
+        detect_variants(pl)
     elif "align" in start:
         align(pl)
+        pre_processing(pl)
+        detect_variants(pl)
     elif "pre-processing" in start:
         pre_processing(pl)
+        detect_variants(pl)
     elif "varcall" in start:
         detect_variants(pl)
     else:

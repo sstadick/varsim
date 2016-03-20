@@ -85,7 +85,7 @@ class pipeline:
         print "--> Running Novoalign"
         novoref = self.refgenome.split(".")[0] + ".nix"
         cmdStr = self.novoalign + " -d " + novoref + " -f " + self.outDir + "/" + self.basename + in_suffix + " " \
-                 + self.outdir + "/" + self.basename + in2_suffix + " -i MP4000,500 -o SAM > " + self.outdir + "/" \
+                 + self.outdir + "/" + self.basename + in2_suffix + " -i MP 4000,500 -o SAM > " + self.outdir + "/" \
                  + self.basename + out_suffix
         self.run_cmd(cmdStr)
 
