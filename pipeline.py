@@ -76,14 +76,14 @@ class pipeline:
 
     def run_bowtie2(self, in_suffix, out_suffix, in2_suffix=""):
         print "--> Running Bowtie2"
-        bowtieref = ".".split(self.refgenome)[0] # gives the path to the basename
+        bowtieref = self.refgenome.split(".")[0] # gives the path to the basename
         cmdStr = self.bowtie2 + " -x " + bowtieref + " -1 " + self.outdir + "/" + self.basename + in_suffix + " -2 " \
                  + self.outdir + "/" + self.basename + in2_suffix + " -S " + self.outdir + "/" + self.basename + out_suffix
         self.run_cmd(cmdStr)
 
     def run_novoalign(self, in_suffix, out_suffix, in2_suffix):
         print "--> Running Novoalign"
-        novoref = ".".split(self.refgenome)[0] + ".nix"
+        novoref = self.refgenome.split(".")[0] + ".nix"
         cmdStr = self.novoalign + " -d " + novoref + " -f " + self.outDir + "/" + self.basename + in_suffix + " " \
                  + self.outdir + "/" + self.basename + in2_suffix + " -i MP4000,500 -o SAM > " + self.outdir + "/" \
                  + self.basename + out_suffix
@@ -135,9 +135,10 @@ class pipeline:
 
     def convertbamtofastq(self):
         print "--> Running " + self.picard
-        cmdStr = "java -jar " + self.picard + " SamToFASTQ I=" + self.outdir + "/" + self.basename + "_indel.bam FASTQ=" \
-                 + self.outdir + "/" + self.basename + "_new1.fq + SECOND_END_FASTQ=" + self.outdir + "/" \
+        cmdStr = "java -jar " + self.picard + " SamToFastq I=" + self.outdir + "/" + self.basename + "_indel.bam FASTQ=" \
+                 + self.outdir + "/" + self.basename + "_new1.fq SECOND_END_FASTQ=" + self.outdir + "/" \
                  + self.basename + "_new2.fq"
+        self.run_cmd(cmdStr)
 
     def markduplicates(self):
         print "--> Running " + self.picard + " MarkDuplicates"
@@ -178,6 +179,10 @@ class pipeline:
                  + "_realigned.bam --out ./mutect_callstats.txt --coverage_file ./mutect_coverage.txt " \
                    "--vcf ./mutect.vcf --num_threads 8"
         self.run_cmd(cmdStr)
+
+    def run_vardict(self):
+        print "--> Running VarDict"
+        pass
 
 
     def move(self, start, end):

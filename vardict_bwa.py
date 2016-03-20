@@ -18,9 +18,7 @@ from pipeline import pipeline
 outDir = ""
 bedFile = ""
 baseName = ""
-caller = ""
-aligner = ""
-start = ""
+mutBedFile = ""
 
 # SOFTWARE
 PICARD = "/home/ubuntu/sstadick/bin_sstadick/PICARD/picard-tools-1.141/picard.jar"
@@ -32,8 +30,7 @@ BEDTOOLS = "/home/ubuntu/jrw_pgdx/jwhite-bin/bedtools"
 SAMTOOLS = "/home/ubuntu/jrw_pgdx/jwhite-bin/samtools"
 PULLCOSM = "/home/ubuntu/sstadick/scripts/pullCosm.py"
 MUTECT = "/home/ubuntu/jrw_pgdx/jwhite-lib/mutect-1.1.4/muTect-1.1.4.jar"
-BOWTIE2 = "/home/ubuntu/jrw_pgdx/jwhite-bin/bowtie2"
-NOVOALIGN = "/home/ubuntu/jrw_pgdx/jwhite-bin/novoalign"
+VARDICT = "/home/ubuntu/sstadick/bin-sstadick/"
 
 # REFS
 REF_GENOME_HG38 = "/mnt/VAR_DATA/OFFICAL_REFs/hg38/hg38.fa"
@@ -61,9 +58,9 @@ def create_reads(pl):
 
     # 3
     if (not os.path.isfile(outDir + "/" + baseName + "_reads_corrected.sam")):
-        pl.run_bowtie2("_reads1.fq", "_reads2.fq", "_reads_corrected.sam")
+        pl.bwa_mem(in_suffix="_reads1.fq", in2_suffix="_reads2.fq", out_suffix="_reads_corrected.sam")
     else:
-        print "--> Bowtie2 on ART SAM has already been run"
+        print "--> BWA MEM on ART SAM has already been run"
 
     if (not os.path.isfile(outDir + "/" + baseName + "_reads.bam")):
         pl.samtobam("_reads_corrected.sam", "_reads.bam")
@@ -118,47 +115,32 @@ def addMuts(pl):
     else:
         print "--> Bamsurgeon indel has alread run"
 
-    print "--> Mutations added. Final BAM is " + outDir + baseName + "/" + "_indel.bam"
-
-def align(pl):
-    # starts processing on basename_indel.bam
-    # outputs basename_indel_sort.bam
     #6
-    print "--> Starging Realignment"
     if (not os.path.isfile(outDir + "/" + baseName + "_new1.fq")):
-        pl.convertbamtofastq()
+        pl.addindels()
     else:
         print "--> Picard samtofastq has alread run"
 
-    #7 Select aligner:
-    if "bowtie2" in aligner:
-        if (not os.path.isfile(outDir + "/" + baseName + "_indel.sam")):
-            pl.run_bowtie2("_new1.fq", "_new2.fq", "_indel.sam")
-        else:
-            print "--> Bowtie2 on ART SAM has already been run"
-    elif "bwa" in aligner:
-        if (not os.path.isfile(outDir + "/" + baseName + "_indel.sam")):
-            pl.bwa_mem("_new1.fq", "_new2.fq", "_indel.sam")
-        else:
-            print "--> BWA MEM has already been run"
+    #7
+    if (not os.path.isfile(outDir + "/" + baseName + "_indel.sam")):
+        pl.bwa_mem("_new1.fq", "_new2.fq", "_indel.sam")
     else:
-        print "please select bowtie2, bwa, or novoalign as your -a aligner option"
-        sys.exit(2)
+        print "--> BWA MEM on ART SAM has already been run"
 
     #7.5 sam to bam
-    if (not os.path.isfile(outDir + "/" + baseName + "_indel.bam")):
+    if (not os.path.isfile(outDir + "/" + baseName + "_re_indel.bam")):
         pl.samtobam("_indel.sam", "_indel.bam")
     else:
         print "--> SAMTOOLS View conversion from SAM to BAM has already been run"
 
     #8
     if (not os.path.isfile(outDir + "/" + baseName + "_indel_sort.bam.bai")):
-        pl.sort_with_picard("_indel.bam", "_indel_sort.bam")
+        pl.sort_with_picard("_re_indel.bam", "_indel_sort.bam")
     else:
             print "--> " + baseName + "_indel.bam has alread been sorted by PICARD"
 
 
-    print "--> End Realignment. Final BAM is " + outDir + baseName + "/" + "_indel_sort.bam"
+    print "--> Mutations added. Final BAM is " + outDir + baseName + "/" + "_indel_sort.bam"
 
 # DATA PROCESSING
 def pre_processing(pl):
@@ -221,21 +203,11 @@ def controller():
     pl = pipeline(outputdirectory=outDir, prefix=baseName, pathtorefgenome=REF_GENOME_HG38, pathtocosmic=COSMIC,
           pathtogatk=GATK, pathtopicard=PICARD, pathtobwa=BWA, pathtobamsurgeondir=BAMSURGEON_DIR,
           pathtoart=ART_ILLUMINA, pathtobedtools=BEDTOOLS, pathtosamtools=SAMTOOLS, pathtopullcosm=PULLCOSM, pathtomutect=MUTECT,
-          bedfile=bedFile, pathtobowtie2=BOWTIE2, pathtonovoalign=NOVOALIGN)
-
-    if "create" in start:
-        create_reads(pl)
-    elif "addMuts" in start:
-        addMuts(pl)
-    elif "align" in start:
-        align(pl)
-    elif "pre-processing" in start:
-        pre_processing(pl)
-    elif "varcall" in start:
-        detect_variants(pl)
-    else:
-        print " please select create, addMuts, align, pre-processing, or varcall as -s start option"
-        sys.exit(1)
+          bedfile=bedFile)
+    #create_reads(pl)
+    addMuts(pl)
+    pre_processing(pl)
+    detect_variants(pl)
 
 
 def main():
@@ -245,13 +217,13 @@ def main():
 
     try:
         #opts, args = getopt.getopt(sys.argv[1:], "i:r:o:b:t:m:")
-        opts, args = getopt.getopt(sys.argv[1:], "o:b:t:a:c:s:")
+        opts, args = getopt.getopt(sys.argv[1:], "o:b:t:m:")
     except getopt.GetoptError as err:
         print str(err)
 ## TODO: Note that the -b and -m bed files are actaully the same one! Otherwise you will get a truncated and
         # possibly different set:
         print "/home/ubuntu/sstadick/scripts/mutect_pipeline.py -o /mnt/VAR_DATA/SETS/script_test2/ -b " + \
-              "/mnt/VAR_DATA/SETS/script_test2/BEDS/ROI.bed -a bowtie -c mutect -s align -t fullTest"
+              "/mnt/VAR_DATA/SETS/script_test2/BEDS/ROI.bed -m /mnt/VAR_DATA/SETS/script_test2/BEDS/ROI.bed -t fullTest"
 
         sys.exit(2)
     for o, a in opts:
@@ -265,12 +237,8 @@ def main():
             bed = a
         elif o == "-t":
             name = a
-        elif o == "-a": # what aligner to use
-            aligner = a
-        elif o == "-c": # what variant caller to use
-            caller = a
-        elif o == "-s": # what starting point
-            start = a
+        elif o == "-m":
+            muts= a
         else:
             assert False, "unhandled optoin"
 
@@ -281,18 +249,15 @@ def main():
     global outDir
     global bedFile
     global baseName
-    global caller
-    global aligner
-    global start
+    global mutBedFile
     outDir = os.path.abspath(out)
     print "Output Directory: " + outDir
     bedFile = os.path.abspath(bed)
     print "Bed file path is: " +  bedFile
     baseName = name
     print "Base name is: " + baseName
-    print "Variant Caller in use: " + caller
-    print "Aligner in use: " + aligner
-    print "Start point is: " + start
+    mutBedFile = os.path.abspath(muts)
+    print "Path to mutations bed file is: " + mutBedFile
 
 
     controller()

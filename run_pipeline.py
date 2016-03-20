@@ -141,6 +141,11 @@ def align(pl):
             pl.bwa_mem("_new1.fq", "_new2.fq", "_indel.sam")
         else:
             print "--> BWA MEM has already been run"
+    elif "novoalign" in aligner:
+        if (not os.path.isfile(outDir + "/" + baseName + "_indel.sam")):
+            pl.bwa_mem("_new1.fq", "_new2.fq", "_indel.sam")
+        else:
+            print "--> Novoalign has already been run"
     else:
         print "please select bowtie2, bwa, or novoalign as your -a aligner option"
         sys.exit(2)
@@ -239,7 +244,9 @@ def controller():
 
 
 def main():
-
+    global caller
+    global aligner
+    global start
     out = ""
 
 
@@ -251,7 +258,7 @@ def main():
 ## TODO: Note that the -b and -m bed files are actaully the same one! Otherwise you will get a truncated and
         # possibly different set:
         print "/home/ubuntu/sstadick/scripts/mutect_pipeline.py -o /mnt/VAR_DATA/SETS/script_test2/ -b " + \
-              "/mnt/VAR_DATA/SETS/script_test2/BEDS/ROI.bed -a bowtie -c mutect -s align -t fullTest"
+              "/mnt/VAR_DATA/SETS/script_test2/BEDS/ROI.bed -a bowtie2 -c mutect -s align -t bowtie2Test"
 
         sys.exit(2)
     for o, a in opts:
@@ -281,9 +288,6 @@ def main():
     global outDir
     global bedFile
     global baseName
-    global caller
-    global aligner
-    global start
     outDir = os.path.abspath(out)
     print "Output Directory: " + outDir
     bedFile = os.path.abspath(bed)
