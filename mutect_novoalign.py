@@ -7,6 +7,7 @@
 #*********************************************************
 # This script performs will generate reads as fastq files that resemeble
 # Illumina reads. There will also be an option for starting with a bam file
+# This uses hg38, novoalign, and mutect
 #*********************************************************
 
 
@@ -31,6 +32,7 @@ SAMTOOLS = "/home/ubuntu/jrw_pgdx/jwhite-bin/samtools"
 PULLCOSM = "/home/ubuntu/sstadick/scripts/pullCosm.py"
 MUTECT = "/home/ubuntu/jrw_pgdx/jwhite-lib/mutect-1.1.4/muTect-1.1.4.jar"
 BOWTIE2 = "/home/ubuntu/jrw_pgdx/jwhite-bin/bowtie2"
+NOVOALIGN = "/home/ubuntu/jrw_pgdx/jwhite-bin/novoalign"
 
 # REFS
 REF_GENOME_HG38 = "/mnt/VAR_DATA/OFFICAL_REFs/hg38/hg38.fa"
@@ -58,9 +60,9 @@ def create_reads(pl):
 
     # 3
     if (not os.path.isfile(outDir + "/" + baseName + "_reads_corrected.sam")):
-        pl.run_bowtie2("_reads1.fq", "_reads2.fq", "_reads_corrected.sam")
+        pl.run_novoalign("_reads1.fq", "_reads2.fq", "_reads_corrected.sam")
     else:
-        print "--> Bowtie2 on ART SAM has already been run"
+        print "--> Novoalign on ART SAM has already been run"
 
     if (not os.path.isfile(outDir + "/" + baseName + "_reads.bam")):
         pl.samtobam("_reads_corrected.sam", "_reads.bam")
@@ -123,9 +125,9 @@ def addMuts(pl):
 
     #7
     if (not os.path.isfile(outDir + "/" + baseName + "_indel.sam")):
-        pl.run_bowtie2("_new1.fq", "_new2.fq", "_indel.sam")
+        pl.run_novoalign("_new1.fq", "_new2.fq", "_indel.sam")
     else:
-        print "--> Bowtie2 on ART SAM has already been run"
+        print "--> Novoalign on ART SAM has already been run"
 
     #7.5 sam to bam
     if (not os.path.isfile(outDir + "/" + baseName + "_indel.bam")):
@@ -203,7 +205,7 @@ def controller():
     pl = pipeline(outputdirectory=outDir, prefix=baseName, pathtorefgenome=REF_GENOME_HG38, pathtocosmic=COSMIC,
           pathtogatk=GATK, pathtopicard=PICARD, pathtobwa=BWA, pathtobamsurgeondir=BAMSURGEON_DIR,
           pathtoart=ART_ILLUMINA, pathtobedtools=BEDTOOLS, pathtosamtools=SAMTOOLS, pathtopullcosm=PULLCOSM, pathtomutect=MUTECT,
-          bedfile=bedFile, pathtobowtie2=BOWTIE2)
+          bedfile=bedFile, pathtobowtie2=BOWTIE2, pathtonovoalign=NOVOALIGN)
     #create_reads(pl)
     addMuts(pl)
     pre_processing(pl)

@@ -14,8 +14,8 @@ import shlex
 class pipeline:
 
     def __init__(self, outputdirectory, prefix, pathtorefgenome, pathtocosmic, pathtogatk, pathtopicard,
-                 pathtobwa, pathtobamsurgeondir, pathtoart, pathtobedtools, pathtosamtools, pathtopullcosm,
-                 pathtomutect, bedfile=""):
+                 pathtobwa, pathtobamsurgeondir, pathtoart, pathtobedtools, pathtosamtools, pathtopullcosm="",
+                 pathtomutect="", pathtobowtie2="", pathtonovoalign="", bedfile=""):
         """This method initializes a pipeline and takes in the three needed arguments of
         :param outputdirectory: the output directory for the pipeline
         :param prefix: the prefix of all names for the pipeline"""
@@ -37,6 +37,8 @@ class pipeline:
         self.samtools = pathtosamtools
         self.pullcosm = pathtopullcosm
         self.mutect = pathtomutect
+        self.bowtie2 = pathtobowtie2
+        self.novoalign = pathtonovoalign
 
 
     def bedtools_getfasta(self):
@@ -71,6 +73,21 @@ class pipeline:
         cmdStr = self.bwa + " mem " + self.refgenome + " " + self.basename + in_suffix + " " + self.basename \
                  + in2_suffix + " > " + self.basename + out_suffix
         self.run_cmd_call(cmdStr)
+
+    def run_bowtie2(self, in_suffix, out_suffix, in2_suffix=""):
+        print "--> Running Bowtie2"
+        bowtieref = ".".split(self.refgenome)[0] # gives the path to the basename
+        cmdStr = self.bowtie2 + " -x " + bowtieref + " -1 " + self.outdir + "/" + self.basename + in_suffix + " -2 " \
+                 + self.outdir + "/" + self.basename + in2_suffix + " -S " + self.outdir + "/" + self.basename + out_suffix
+        self.run_cmd(cmdStr)
+
+    def run_novoalign(self, in_suffix, out_suffix, in2_suffix):
+        print "--> Running Novoalign"
+        novoref = ".".split(self.refgenome)[0] + ".nix"
+        cmdStr = self.novoalign + " -d " + novoref + " -f " + self.outDir + "/" + self.basename + in_suffix + " " \
+                 + self.outdir + "/" + self.basename + in2_suffix + " -i MP4000,500 -o SAM > " + self.outdir + "/" \
+                 + self.basename + out_suffix
+        self.run_cmd(cmdStr)
 
     def samtobam(self, in_suffix, out_suffix):
         print "--> Running SAMTOOLS view"
