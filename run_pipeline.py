@@ -132,18 +132,18 @@ def align(pl):
 
     #7 Select aligner:
     if "bowtie2" in aligner:
-        if (not os.path.isfile(outDir + "/" + baseName + "_indel.sam")):
-            pl.run_bowtie2(in_suffix="_new1.fq", in2_suffix="_new2.fq", out_suffix="_indel.sam")
+        if (not os.path.isfile(outDir + "/" + baseName + "_aln.sam")):
+            pl.run_bowtie2(in_suffix="_new1.fq", in2_suffix="_new2.fq", out_suffix="_aln.sam")
         else:
             print "--> Bowtie2 on ART SAM has already been run"
     elif "bwa" in aligner:
-        if (not os.path.isfile(outDir + "/" + baseName + "_indel.sam")):
-            pl.bwa_mem(in_suffix="_new1.fq", in2_suffix="_new2.fq", out_suffix="_indel.sam")
+        if (not os.path.isfile(outDir + "/" + baseName + "_aln.sam")):
+            pl.bwa_mem(in_suffix="_new1.fq", in2_suffix="_new2.fq", out_suffix="_aln.sam")
         else:
             print "--> BWA MEM has already been run"
     elif "novoalign" in aligner:
-        if (not os.path.isfile(outDir + "/" + baseName + "_indel.sam")):
-            pl.run_novoalign(in_suffix="_new1.fq", in2_suffix="_new2.fq", out_suffix="_indel.sam")
+        if (not os.path.isfile(outDir + "/" + baseName + "_aln.sam")):
+            pl.run_novoalign(in_suffix="_new1.fq", in2_suffix="_new2.fq", out_suffix="_aln.sam")
         else:
             print "--> Novoalign has already been run"
     else:
@@ -152,7 +152,7 @@ def align(pl):
 
     #7.5 sam to bam
     if (not os.path.isfile(outDir + "/" + baseName + "_indel.bam")):
-        pl.samtobam("_indel.sam", "_new.bam")
+        pl.samtobam("_aln.sam", "_new.bam")
     else:
         print "--> SAMTOOLS View conversion from SAM to BAM has already been run"
 

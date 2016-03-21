@@ -7,11 +7,12 @@
 # Run directory's were preped in advance with the appropriate <basename>_indel.bam files and BED file
 #######################################
 
-# Run novoalign with mutect on hg38
-/home/ubuntu/sstadick/scripts/run_pipeline.py -o /mnt/VAR_DATA/SETS/novoTest/ -b /mnt/VAR_DATA/SETS/novoTest/BEDS/ROI.bed -a novoalign -c mutect -s align -t novoTest
 
 # Run bowtie2 with mutect on hg38
 /home/ubuntu/sstadick/scripts/run_pipeline.py -o /mnt/VAR_DATA/SETS/bowtieTest/ -b /mnt/VAR_DATA/SETS/bowtieTest/BEDS/ROI.bed -a bowtie2 -c mutect -s align -t bowtieTest
+
+# Run novoalign with mutect on hg38
+/home/ubuntu/sstadick/scripts/run_pipeline.py -o /mnt/VAR_DATA/SETS/novoTest/ -b /mnt/VAR_DATA/SETS/novoTest/BEDS/ROI.bed -a novoalign -c mutect -s align -t novoTest
 
 # Run bwa with mutect on hg38
 /home/ubuntu/sstadick/scripts/run_pipeline.py -o /mnt/VAR_DATA/SETS/bwaTest/ -b /mnt/VAR_DATA/SETS/bwaTest/BEDS/ROI.bed -a bwa -c mutect -s align -t bwaTest
