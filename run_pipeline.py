@@ -151,7 +151,7 @@ def align(pl):
         sys.exit(2)
 
     #7.5 sam to bam
-    if (not os.path.isfile(outDir + "/" + baseName + "_indel.bam")):
+    if (not os.path.isfile(outDir + "/" + baseName + "_new.bam")):
         pl.samtobam("_aln.sam", "_new.bam")
     else:
         print "--> SAMTOOLS View conversion from SAM to BAM has already been run"
