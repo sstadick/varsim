@@ -298,7 +298,7 @@ def main():
 
     try:
         #opts, args = getopt.getopt(sys.argv[1:], "i:r:o:b:t:m:")
-        opts, args = getopt.getopt(sys.argv[1:], "o:b:t:a:c:s:")
+        opts, args = getopt.getopt(sys.argv[1:], "o:b:t:a:c:s:r:")
     except getopt.GetoptError as err:
         print str(err)
 ## TODO: Note that the -b and -m bed files are actaully the same one! Otherwise you will get a truncated and
