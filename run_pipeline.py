@@ -207,45 +207,43 @@ def pre_processing(pl):
     #4.5
     # in suffix
     if "synth" in real:
-	    if (not os.path.isfile(outDir + "/" + baseName + "_prevar.bam")):
-	    	pl.move((outDir + "/" + baseName + "_realigned.bam"), (outDir + "/" + baseName + "_prevar.bam"))
-	    else:
-	    	print "--> move of baserecalibration already done"
-	    
-		if (not os.path.isfile(outDir + "/" + baseName + "_prevar.bam.bai")):
-	        pl.samtoolsindex()
-	    else:
-	        print "--> Samtools index on " + outDir + "/" + baseName + "_prevar.bam already done"
-	
-	    print "--> End of PRE-PROCESSING: " + outDir + "/" + baseName + " _prevar.bam"
-	 else:
-	 	if (not os.path.isfile(outDir + "/" + baseName + "_realigned.bam.bai")):
-	        pl.samtoolsindex()
-	    else:
-	        print "--> Samtools index on " + outDir + "/" + baseName + "_realigned.bam already done"
-	
-	    print "--> End of PRE-PROCESSING: " + outDir + "/" + baseName + " _realigned.bam"
+        if (not os.path.isfile(outDir + "/" + baseName + "_prevar.bam")):
+            pl.move((outDir + "/" + baseName + "_realigned.bam"), (outDir + "/" + baseName + "_prevar.bam"))
+        else:
+            print "--> move of baserecalibration already done"
+
+        if (not os.path.isfile(outDir + "/" + baseName + "_prevar.bam.bai")):
+            pl.samtoolsindex()
+        else:
+            print "--> Samtools index on " + outDir + "/" + baseName + "_prevar.bam already done"
+    else:
+        if not os.path.isfile(outDir + "/" + baseName + "_realigned.bam.bai"):
+            pl.samtoolsindex()
+        else:
+            print "--> Samtools index on " + outDir + "/" + baseName + "_realigned.bam already done"
+
+        print "--> End of PRE-PROCESSING: " + outDir + "/" + baseName + " _realigned.bam"
     
 
 def baserecal(pl):
-	insuffix = "_realigned.bam"
-	oursuffix = "_recal.bam"
-	if (not os.path.isfile(outDir + "/" + baseName + "_recal.bam")):
-		pl.baserecalibration()
-	else:
-		print "--> baserecalibration on " + outDir + "/" + baseName + "_realigned.bam already done"
+    insuffix = "_realigned.bam"
+    oursuffix = "_recal.bam"
+    if (not os.path.isfile(outDir + "/" + baseName + "_recal.bam")):
+        pl.baserecalibration()
+    else:
+        print "--> baserecalibration on " + outDir + "/" + baseName + "_realigned.bam already done"
     
     if (not os.path.isfile(outDir + "/" + baseName + "_prevar.bam")):
-    	pl.move((outDir + "/" + baseName + "_recal.bam"), (outDir + "/" + baseName + "_prevar.bam"))
+        pl.move((outDir + "/" + baseName + "_recal.bam"), (outDir + "/" + baseName + "_prevar.bam"))
     else:
-    	print "--> move of baserecalibration already done"
+        print "--> move of baserecalibration already done"
     
-	if (not os.path.isfile(outDir + "/" + baseName + "_prevar.bam.bai")):
+    if (not os.path.isfile(outDir + "/" + baseName + "_prevar.bam.bai")):
         pl.samtoolsindex()
     else:
         print "--> Samtools index on " + outDir + "/" + baseName + "_prevar.bam already done"
     
-	print "--> Base Recalibration completed"
+    print "--> Base Recalibration completed"
     
 # VARIANT DETECTION
 def detect_variants(pl):
