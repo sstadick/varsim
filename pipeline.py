@@ -154,10 +154,10 @@ class pipeline:
         self.run_cmd(cmdStr)
     
     def baserecal(self):
-    	print "--> Running " + self.gatk + " BQSR"
-    	cmdStr = "java -jar " + self.gatk + " -T PrintReads -R " + self.refgenome + " -I "  + self.outdir + "/" + self.basename \
-    		+ "_realigned.bam -BQSR recalibration_report.grp -o " + self.outdir + "/" + self.basename + "_recal.bam" 
-   		self.run_cmd(cmdStr)  	
+        print "--> Running " + self.gatk + " BQSR"
+        cmdStr = "java -jar " + self.gatk + " -T PrintReads -R " + self.refgenome + " -I "  + self.outdir + "/" + self.basename \
+            + "_realigned.bam -BQSR recalibration_report.grp -o " + self.outdir + "/" + self.basename + "_recal.bam"
+        self.run_cmd(cmdStr)
 
     def createRealignTargets(self):
         print "--> Running " + self.gatk + "RealignerTargetCreator"
