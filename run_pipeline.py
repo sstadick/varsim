@@ -171,7 +171,7 @@ def pre_processing(pl):
     1. Sorth the BAM with PICARD tools
     2. Mark Duplcate Reads
     3. Realign Indels (usinging ???)
-    4. Skip Base Recalibration """
+    5. Skip Base Recalibration """
     #1
     if (not os.path.isfile(outDir + "/" + baseName + "_indel_sort.bam")):
         pl.sort_with_picard("_indel.bam", "_indel_sort.bam")
@@ -210,7 +210,9 @@ def pre_processing(pl):
         print "--> Samtools index on " + outDir + "/" + baseName + "_realigned.bam already done"
 
     print "--> End of PRE-PROCESSING: " + outDir + "/" + baseName + " _realigned.bam"
+    
 
+def baserecal(pl):
 # VARIANT DETECTION
 def detect_variants(pl):
     if (not os.path.isfile(outDir + "/mutect_callstats.txt")):
@@ -232,9 +234,10 @@ def controller():
         create_reads(pl)
     elif "addMuts" in start:
         addMuts(pl)
-        align(pl)
-        pre_processing(pl)
-        detect_variants(pl)
+        #align(pl)
+        #pre_processing(pl)
+        #detect_variants(pl)
+        
     elif "align" in start:
         align(pl)
         pre_processing(pl)

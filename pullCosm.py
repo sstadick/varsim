@@ -70,7 +70,7 @@ def createBedFile(filteredDict):
 			chrom = info[0]
 			start = info[1]
 			end = info[1]
-			vaf = ".8"
+			vaf = ".4"
 			into = info[4]
 			line = "chr" + chrom + "\t" + start + "\t" + end + "\t" + vaf + "\t" + into + "\n"
 			filename = OUTPATH + "_snp.bed"
@@ -82,7 +82,7 @@ def createBedFile(filteredDict):
                         chrom = info[0]
                         start = info[1]
                         #end
-                        vaf = ".75"
+                        vaf = ".4"
 			insert = ""
 
 			if 'ins' in value:
