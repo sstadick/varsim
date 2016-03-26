@@ -21,6 +21,7 @@ baseName = ""
 caller = ""
 aligner = ""
 start = ""
+real = ""
 
 # SOFTWARE
 PICARD = "/home/ubuntu/sstadick/bin_sstadick/PICARD/picard-tools-1.141/picard.jar"
@@ -204,15 +205,48 @@ def pre_processing(pl):
         print "--> Indels already realigned"
 
     #4.5
-    if (not os.path.isfile(outDir + "/" + baseName + "_realigned.bam.bai")):
-        pl.samtoolsindex()
-    else:
-        print "--> Samtools index on " + outDir + "/" + baseName + "_realigned.bam already done"
-
-    print "--> End of PRE-PROCESSING: " + outDir + "/" + baseName + " _realigned.bam"
+    # in suffix
+    if "synth" in real:
+	    if (not os.path.isfile(outDir + "/" + baseName + "_prevar.bam")):
+	    	pl.move((outDir + "/" + baseName + "_realigned.bam"), (outDir + "/" + baseName + "_prevar.bam"))
+	    else:
+	    	print "--> move of baserecalibration already done"
+	    
+		if (not os.path.isfile(outDir + "/" + baseName + "_prevar.bam.bai")):
+	        pl.samtoolsindex()
+	    else:
+	        print "--> Samtools index on " + outDir + "/" + baseName + "_prevar.bam already done"
+	
+	    print "--> End of PRE-PROCESSING: " + outDir + "/" + baseName + " _prevar.bam"
+	 else:
+	 	if (not os.path.isfile(outDir + "/" + baseName + "_realigned.bam.bai")):
+	        pl.samtoolsindex()
+	    else:
+	        print "--> Samtools index on " + outDir + "/" + baseName + "_realigned.bam already done"
+	
+	    print "--> End of PRE-PROCESSING: " + outDir + "/" + baseName + " _realigned.bam"
     
 
 def baserecal(pl):
+	insuffix = "_realigned.bam"
+	oursuffix = "_recal.bam"
+	if (not os.path.isfile(outDir + "/" + baseName + "_recal.bam")):
+		pl.baserecalibration()
+	else:
+		print "--> baserecalibration on " + outDir + "/" + baseName + "_realigned.bam already done"
+    
+    if (not os.path.isfile(outDir + "/" + baseName + "_prevar.bam")):
+    	pl.move((outDir + "/" + baseName + "_recal.bam"), (outDir + "/" + baseName + "_prevar.bam"))
+    else:
+    	print "--> move of baserecalibration already done"
+    
+	if (not os.path.isfile(outDir + "/" + baseName + "_prevar.bam.bai")):
+        pl.samtoolsindex()
+    else:
+        print "--> Samtools index on " + outDir + "/" + baseName + "_prevar.bam already done"
+    
+	print "--> Base Recalibration completed"
+    
 # VARIANT DETECTION
 def detect_variants(pl):
     if (not os.path.isfile(outDir + "/mutect_callstats.txt")):
@@ -241,9 +275,13 @@ def controller():
     elif "align" in start:
         align(pl)
         pre_processing(pl)
+        if "real" in real:
+        	baserecal(pl)
         detect_variants(pl)
     elif "pre-processing" in start:
         pre_processing(pl)
+        if "real" in real:
+        	baserecal(pl)
         detect_variants(pl)
     elif "varcall" in start:
         detect_variants(pl)
@@ -256,6 +294,7 @@ def main():
     global caller
     global aligner
     global start
+    global real
     out = ""
 
 
@@ -287,6 +326,8 @@ def main():
             caller = a
         elif o == "-s": # what starting point
             start = a
+        elif o == "-r":
+        	real = a
         else:
             assert False, "unhandled optoin"
 

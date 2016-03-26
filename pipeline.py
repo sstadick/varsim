@@ -71,7 +71,7 @@ class pipeline:
         """
         print "--> Running BWA MEM"
         cmdStr = self.bwa + " mem " + self.refgenome + " " + self.basename + in_suffix + " " + self.basename \
-                 + in2_suffix + " > " + self.basename + out_suffix
+                 + in2_suffix + " > " + self.outdir + "/" + self.basename + out_suffix
         self.run_cmd_call(cmdStr)
 
     def run_bowtie2(self, in_suffix, out_suffix, in2_suffix=""):
@@ -84,7 +84,7 @@ class pipeline:
     def run_novoalign(self, in_suffix, out_suffix, in2_suffix):
         print "--> Running Novoalign"
         novoref = self.refgenome.split(".")[0] + ".nix"
-        cmdStr = self.novoalign + " -d " + novoref + " -f " + self.outdir + "/" + self.basename + in_suffix + " " \
+        cmdStr = self.novoalign + "-c 24 -d " + novoref + " -f " + self.outdir + "/" + self.basename + in_suffix + " " \
                  + self.outdir + "/" + self.basename + in2_suffix + " -i MP 4000,500 -o SAM >" + self.outdir + "/" \
                  + self.basename + out_suffix
         self.run_cmd_call(cmdStr)
@@ -92,7 +92,7 @@ class pipeline:
     def samtobam(self, in_suffix, out_suffix):
         print "--> Running SAMTOOLS view"
         cmdStr = self.samtools + " view -bT " + self.refgenome + " " + self.basename + in_suffix + " > " \
-                 + self.basename + out_suffix
+                 + self.outdir + "/" + self.basename + out_suffix
         try:
             self.run_cmd(cmdStr)
         except:
@@ -152,6 +152,12 @@ class pipeline:
         cmdStr = "java -jar " + self.picard + " AddOrReplaceReadGroups I=" + self.outdir + "/" + self.basename + "_dedup.bam O=" \
                  + self.outdir + "/" + self.basename + "_dedup_rg.bam RGID=4 RGLB=lib1 RGPL=illumina RGPU=unit1 RGSM=20 CREATE_INDEX=True"
         self.run_cmd(cmdStr)
+    
+    def baserecal(self):
+    	print "--> Running " + self.gatk + " BQSR"
+    	cmdStr = "java -jar " + self.gatk + " -T PrintReads -R " + self.refgenome + " -I "  + self.outdir + "/" + self.basename \
+    		+ "_realigned.bam -BQSR recalibration_report.grp -o " + self.outdir + "/" + self.basename + "_recal.bam" 
+   		self.run_cmd(cmdStr)  	
 
     def createRealignTargets(self):
         print "--> Running " + self.gatk + "RealignerTargetCreator"
