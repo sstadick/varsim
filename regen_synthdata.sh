@@ -16,8 +16,8 @@ ln -s /mnt/VAR_DATA/SETS/SYNTH/BAM/*  /mnt/VAR_DATA/SETS/SYNTH/bowtieTest2/bowti
 /home/ubuntu/sstadick/scripts/run_pipeline.py -o /mnt/VAR_DATA/SETS/SYNTH/bowtieTest2/ -b /mnt/VAR_DATA/SETS/SYNTH/bowtieTest2/BEDS/ROI.bed -a bowtie2 -c mutect -s align -t bowtieTest -r synth
 
 # Run novoalign with mutect on hg38
-ln -s /mnt/VAR_DATA/SETS/SYNTH/BEDS/ /mnt/VAR_DATA/SETS/SYNTH/bowtieTest2/BEDS
-ln -s /mnt/VAR_DATA/SETS/SYNTH/BAM/*  /mnt/VAR_DATA/SETS/SYNTH/bowtieTest2/bowtieTest2_indel.bam
+ln -s /mnt/VAR_DATA/SETS/SYNTH/BEDS/ /mnt/VAR_DATA/SETS/SYNTH/novoTest2/BEDS
+ln -s /mnt/VAR_DATA/SETS/SYNTH/BAM/*  /mnt/VAR_DATA/SETS/SYNTH/novoTest2/novoTest2_indel.bam
 /home/ubuntu/sstadick/scripts/varsim/run_pipeline.py -o /mnt/VAR_DATA/SETS/SYNTH/novoTest2/ -b /mnt/VAR_DATA/SETS/SYNTH/novoTest2/BEDS/ROI.bed -a novoalign -c mutect -s align -t novoTest -r synth
 
 # Run bwa with mutect on hg38
