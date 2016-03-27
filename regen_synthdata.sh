@@ -13,14 +13,14 @@
 # Run bowtie2 with mutect on hg38
 ln -s /mnt/VAR_DATA/SETS/SYNTH/BEDS/ /mnt/VAR_DATA/SETS/SYNTH/bowtieTest2/BEDS
 ln -s /mnt/VAR_DATA/SETS/SYNTH/BAM/*  /mnt/VAR_DATA/SETS/SYNTH/bowtieTest2/bowtieTest2_indel.bam
-/home/ubuntu/sstadick/scripts/varsim/run_pipeline.py -o /mnt/VAR_DATA/SETS/SYNTH/bowtieTest2/ -b /mnt/VAR_DATA/SETS/SYNTH/bowtieTest2/BEDS/ROI.bed -a bowtie2 -c mutect -s align -t bowtieTest -r synth
+/home/ubuntu/sstadick/scripts/varsim/run_pipeline.py -o /mnt/VAR_DATA/SETS/SYNTH/bowtieTest2/ -b /mnt/VAR_DATA/SETS/SYNTH/bowtieTest2/BEDS/ROI.bed -a bowtie2 -c mutect -s align -t bowtieTest2 -r synth
 
 # Run novoalign with mutect on hg38
 ln -s /mnt/VAR_DATA/SETS/SYNTH/BEDS/ /mnt/VAR_DATA/SETS/SYNTH/novoTest2/BEDS
 ln -s /mnt/VAR_DATA/SETS/SYNTH/BAM/*  /mnt/VAR_DATA/SETS/SYNTH/novoTest2/novoTest2_indel.bam
-/home/ubuntu/sstadick/scripts/varsim/run_pipeline.py -o /mnt/VAR_DATA/SETS/SYNTH/novoTest2/ -b /mnt/VAR_DATA/SETS/SYNTH/novoTest2/BEDS/ROI.bed -a novoalign -c mutect -s align -t novoTest -r synth
+/home/ubuntu/sstadick/scripts/varsim/run_pipeline.py -o /mnt/VAR_DATA/SETS/SYNTH/novoTest2/ -b /mnt/VAR_DATA/SETS/SYNTH/novoTest2/BEDS/ROI.bed -a novoalign -c mutect -s align -t novoTest2 -r synth
 
 # Run bwa with mutect on hg38
 ln -s /mnt/VAR_DATA/SETS/SYNTH/BEDS/ /mnt/VAR_DATA/SETS/SYNTH/bwaTest2/BEDS
 ln -s /mnt/VAR_DATA/SETS/SYNTH/BAM/*  /mnt/VAR_DATA/SETS/SYNTH/bwaTest2/bwaTest2_indel.bam
-/home/ubuntu/sstadick/scripts/varsim/run_pipeline.py -o /mnt/VAR_DATA/SETS/SYNTH/bwaTest2/ -b /mnt/VAR_DATA/SETS/SYNTH/bwaTest2/BEDS/ROI.bed -a bwa -c mutect -s align -t bwaTest -r synth
+/home/ubuntu/sstadick/scripts/varsim/run_pipeline.py -o /mnt/VAR_DATA/SETS/SYNTH/bwaTest2/ -b /mnt/VAR_DATA/SETS/SYNTH/bwaTest2/BEDS/ROI.bed -a bwa -c mutect -s align -t bwaTest2 -r synth
