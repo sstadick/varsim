@@ -91,7 +91,7 @@ class pipeline:
 
     def samtobam(self, in_suffix, out_suffix):
         print "--> Running SAMTOOLS view"
-        cmdStr = self.samtools + " view -bT " + self.refgenome + " " self.outdir + "/" + self.basename + in_suffix + " > " \
+        cmdStr = self.samtools + " view -bT " + self.refgenome + " " + self.outdir + "/" + self.basename + in_suffix + " > " \
                  + self.outdir + "/" + self.basename + out_suffix
         try:
             self.run_cmd(cmdStr)
