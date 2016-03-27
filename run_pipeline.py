@@ -62,7 +62,7 @@ def create_reads(pl):
 
     # 3
     if (not os.path.isfile(outDir + "/" + baseName + "_reads_corrected.sam")):
-        pl.run_bowtie2("_reads1.fq", "_reads2.fq", "_reads_corrected.sam")
+        pl.run_bowtie2(in_suffix="_reads1.fq", in2_suffix="_reads2.fq", out_suffix="_reads_corrected.sam")
     else:
         print "--> Bowtie2 on ART SAM has already been run"
 
