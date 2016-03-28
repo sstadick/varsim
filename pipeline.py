@@ -162,7 +162,7 @@ class pipeline:
     def createRealignTargets(self):
         print "--> Running " + self.gatk + "RealignerTargetCreator"
         cmdStr = "java -jar " + self.gatk + " -T RealignerTargetCreator -R " + self.refgenome + " -I " + self.outdir \
-                 + "/" + self.basename + "_dedup_rg.bam -o " + self.outdir + "/" + realignment_target.list"
+                 + "/" + self.basename + "_dedup_rg.bam -o " + self.outdir + "/realignment_target.list"
         self.run_cmd(cmdStr)
 
     def realignindels(self):
