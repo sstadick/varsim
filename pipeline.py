@@ -71,13 +71,13 @@ class pipeline:
         """
         print "--> Running BWA MEM"
         cmdStr = self.bwa + " mem " + self.refgenome + " " + self.basename + in_suffix + " " + self.basename \
-                 + in2_suffix + " > " + self.outdir + "/" + self.basename + out_suffix
+                 + in2_suffix + " > " + self.outdir + "/" + self.basename + out_suffix + " -t 24"
         self.run_cmd_call(cmdStr)
 
     def run_bowtie2(self, in_suffix, out_suffix, in2_suffix=""):
         print "--> Running Bowtie2"
         bowtieref = self.refgenome.split(".")[0] # gives the path to the basename
-        cmdStr = self.bowtie2 + " -x " + bowtieref + " -1 " + self.outdir + "/" + self.basename + in_suffix + " -2 " \
+        cmdStr = self.bowtie2 + " -p 24 -x " + bowtieref + " -1 " + self.outdir + "/" + self.basename + in_suffix + " -2 " \
                  + self.outdir + "/" + self.basename + in2_suffix + " -S " + self.outdir + "/" + self.basename + out_suffix
         self.run_cmd(cmdStr)
 
@@ -113,7 +113,7 @@ class pipeline:
         # ex for in: _reads.bam
         # ex for out: _reads_sorted.bam"
         print "--> Running " + self.picard
-        cmdStr = "java -jar " +  self.picard + " SortSam INPUT=" + self.outdir + "/" + self.basename + in_suffix + " OUTPUT=" \
+        cmdStr = "java -XX:ParallelGCThreads=24 -jar " +  self.picard + " SortSam INPUT=" + self.outdir + "/" + self.basename + in_suffix + " OUTPUT=" \
                  + self.outdir + "/" + self.basename + out_suffix +" SORT_ORDER=coordinate CREATE_INDEX=True"
         self.run_cmd(cmdStr)
         self.move(self.outdir + "/" + self.basename + out_suffix.split('.')[0] + ".bai", self.outdir + "/"
@@ -133,23 +133,23 @@ class pipeline:
                      + self.refgenome + " -o " + self.outdir + "/" + self.basename + "_indel.bam"
             self.run_cmd(cmdStr)
 
-    def convertbamtofastq(self):
+    def convertbamtofastq(self, infile):
         print "--> Running " + self.picard
-        cmdStr = "java -jar " + self.picard + " SamToFastq I=" + self.outdir + "/" + self.basename + "_indel.bam FASTQ=" \
+        cmdStr = "java -XX:ParallelGCThreads=24 -jar " + self.picard + " SamToFastq I=" + infile + " FASTQ=" \
                  + self.outdir + "/" + self.basename + "_new1.fq SECOND_END_FASTQ=" + self.outdir + "/" \
                  + self.basename + "_new2.fq"
         self.run_cmd(cmdStr)
 
     def markduplicates(self):
         print "--> Running " + self.picard + " MarkDuplicates"
-        cmdStr = "java -jar " + self.picard + " MarkDuplicates INPUT=" + self.outdir + "/" + self.basename \
+        cmdStr = "java -XX:ParallelGCThreads=24 -jar " + self.picard + " MarkDuplicates INPUT=" + self.outdir + "/" + self.basename \
                  + "_indel_sort.bam OUTPUT=" + self.outdir + "/" + self.basename + "_dedup.bam METRICS_FILE=" \
                  + self.outdir + "/" + "metrics_" + self.basename + ".txt CREATE_INDEX=True"
         self.run_cmd(cmdStr)
 
     def add_replace_readgroups(self):
         print "--> Running " + self.picard + " AddOrReplaceReadGroups"
-        cmdStr = "java -jar " + self.picard + " AddOrReplaceReadGroups I=" + self.outdir + "/" + self.basename + "_dedup.bam O=" \
+        cmdStr = "java -XX:ParallelGCThreads=24 -jar " + self.picard + " AddOrReplaceReadGroups I=" + self.outdir + "/" + self.basename + "_dedup.bam O=" \
                  + self.outdir + "/" + self.basename + "_dedup_rg.bam RGID=4 RGLB=lib1 RGPL=illumina RGPU=unit1 RGSM=20 CREATE_INDEX=True"
         self.run_cmd(cmdStr)
     
@@ -182,8 +182,8 @@ class pipeline:
         cmdStr = "/usr/lib/jvm/java-6-openjdk-amd64/bin/java -Xmx24g -jar " + self.mutect \
                  + " --analysis_type MuTect --reference_sequence " \
                  + self.refgenome + " --input_file:tumor " + self.outdir + "/" + self.basename \
-                 + "_realigned.bam --out ./mutect_callstats.txt --coverage_file ./mutect_coverage.txt " \
-                   "--vcf ./mutect.vcf --num_threads 8"
+                 + "_realigned.bam --out " + self.outdir + "/" + "mutect_callstats.txt --coverage_file ./mutect_coverage.txt " \
+                   "--vcf " + self.outdir + "/" + "/mutect.vcf --num_threads 24"
         self.run_cmd(cmdStr)
 
     def run_vardict(self):

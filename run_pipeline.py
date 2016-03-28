@@ -22,6 +22,7 @@ caller = ""
 aligner = ""
 start = ""
 real = ""
+entrypoint = ""
 
 # SOFTWARE
 PICARD = "/home/ubuntu/sstadick/bin_sstadick/PICARD/picard-tools-1.141/picard.jar"
@@ -126,11 +127,18 @@ def align(pl):
     # outputs basename_indel_sort.bam
     #6
     print "--> Starging Alignment"
-    if (not os.path.isfile(outDir + "/" + baseName + "_new1.fq")):
-        pl.convertbamtofastq()
-    else:
-        print "--> Picard samtofastq has alread run"
-
+    # Determin entry bam
+    if not os.path.isfile(entrypoint):
+        if (not os.path.isfile(outDir + "/" + baseName + "_new1.fq")):
+            entry = outDir + "/" + baseName + "_indel.bam"
+            pl.convertbamtofastq(infile=entry)
+        else:
+            print "--> Picard samtofastq has alread run"
+    else: # start at entrypoint
+        if (not os.path.isfile(outDir + "/" + baseName + "_new1.fq")):
+            pl.convertbamtofastq(infile=entrypoint)
+        else:
+            print "--> Picard samtofastq has already run"
     #7 Select aligner:
     if "bowtie2" in aligner:
         if (not os.path.isfile(outDir + "/" + baseName + "_aln.sam")):
@@ -293,6 +301,7 @@ def main():
     global aligner
     global start
     global real
+    global entrypoint
     out = ""
 
 
@@ -326,6 +335,8 @@ def main():
             start = a
         elif o == "-r":
         	real = a
+        elif o == "-e":
+            entrypoint = a
         else:
             assert False, "unhandled optoin"
 

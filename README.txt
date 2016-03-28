@@ -100,3 +100,12 @@ python /home/ubuntu/sstadick/bin_sstadick/varsim/varsim.py --vc_in_vcf All_20150
 --sv_max_length_lim 1000000 --nlanes 5 --total_coverage 1 \
 --simulator_executable /home/ubuntu/sstadick/bin_sstadick/ART/art_bin_ChocolateCherryCake/art_illumina --out_dir out --log_dir log --work_dir work \
 --simulator a
+
+
+
+
+************************************
+TROUBLESHOOTING
+************************************
+-  If things aren't working, then try exporting the path! this gets me everytime!
+-  
