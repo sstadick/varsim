@@ -66,12 +66,12 @@ Stage0: (Initial run through test see /mnt/VAR_DATA/SETS/1_SET)
         - /mnt/VAR_DATA/SETS/1_SET# java -jar /home/ubuntu/sstadick/bin_sstadick/PICARD/picard-tools-1.141/picard.jar MarkDuplicates INPUT=aln1_snp_sorted.bam OUTPUT=aln1_snp_sorted_dedup.bam METRICS_FILE=metrics_aln1.txt
 
 ************************************
-mutect_pipeline.py
+VarScan 2
 ************************************
-* break down the methods further to make it more modular
-* add in a suffix for each and an infile and outifle for each block
-* add logging and better error handleing (aka breaks)
-
+- Jar was downloaded to /home/ubuntu/sstadick/bin-sstadick/<varscan jar>
+- Docs: http://varscan.sourceforge.net/using-varscan.html
+- Seems to work
+- Need to add support for mpileup
 
 ************************************
 hg19 related material
