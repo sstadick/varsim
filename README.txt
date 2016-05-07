@@ -5,7 +5,9 @@ sstadick@personalgenome.com
 -----------------------------
 The purpose of this file is to document the structure and methods
 that have been developed to test the function of varient callers
-in conjunction with different reference genomes and aligners.
+in conjunction with different reference genomes and aligners. This
+files SERVES AS NOTES ONLY, and by no means is to be concidered an
+official guide or my exact process. 
 
 The goal is to generate paper worthy data and show strengths and
 weaknesses of different methods.
