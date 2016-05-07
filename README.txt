@@ -1,7 +1,6 @@
 -----------------------------
 Created by:
 Seth Stadick
-sstadick@personalgenome.com
 -----------------------------
 The purpose of this file is to document the structure and methods
 that have been developed to test the function of varient callers
